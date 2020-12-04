@@ -1,7 +1,8 @@
 #!/bin/bash
 
 arg1=$1
-file="note.txt"
+file="note"
+ext=".rnt"
 edit=0
 
 args=("$@")
@@ -21,6 +22,10 @@ do
 			exit 2
 		fi
 		;;
+	-l)
+		ls | grep "$ext" | sed "s/$ext//"
+		exit 0
+		;;
     *)
         echo "wrong args"
         exit 2
@@ -28,7 +33,7 @@ do
 done
 
 
-
+file="$file$ext"
 if [ $edit -eq 1 ]; then
 	micro ~/Documents/$file
 else
