@@ -23,19 +23,25 @@ do
 		fi
 		;;
 	-l)
+		cd ~/Documents/
 		ls | grep "$ext" | sed "s/$ext//"
 		exit 0
 		;;
-    *)
-        echo "wrong args"
-        exit 2
+	-h)
+		echo "My Notes, View and edit notes"
+		echo -e "-e \t\tTo edit Note\n-f \t\tTo specify Note\n-l \t\tTo list Notes"
+		exit 0
+		;;
+	*)
+	    echo "wrong args"
+	    exit 2
      esac
 done
 
 
 file="$file$ext"
 if [ $edit -eq 1 ]; then
-	micro ~/Documents/$file
+	vim ~/Documents/$file
 else
 	cat ~/Documents/$file
 fi
