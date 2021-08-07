@@ -3,7 +3,10 @@
 arg1=$1
 file="note"
 ext=".md"
+
 edit=0
+plainText=0
+
 arg_count=$#
 args=("$@")
 
@@ -37,20 +40,20 @@ parseArgs(){
                 ;;
             -l)
                 cd ~/Documents/mynotes
-                ls | grep "$ext" | sed "s/$ext//"
+                echo "Your Notes ->"
+                ls | grep "$ext" | sed "s/$ext//" | awk '{print "  -  " $1}'
                 exit 0
                 ;;
             -h)
                 mynotesHelp
                 exit 0
                 ;;
-            -je)
-                mkdir -p ~/Documents/mynotes/journals
-                edit=1
-                file="journal/$(date +%d-%m-%y)"
+            -t)
+                plainText=1
                 ;;
-            -j)
-                viewJournals
+
+            -pdf)
+                toPdf
                 exit 0
                 ;;
             *)
@@ -65,6 +68,8 @@ evaluate() {
     if [ $edit -eq 1 ]; then
         mkdir -p ~/Documents/mynotes
         vim ~/Documents/mynotes/$file
+    elif [ $plainText -eq 1 ]; then
+        cat ~/Documents/mynotes/$file
     else
         mdv ~/Documents/mynotes/$file
     fi
@@ -72,36 +77,23 @@ evaluate() {
 
 mynotesHelp() {
     echo -e "My Notes, View and edit notes"
-    echo -e "  -e \t\tTo edit Note"
-    echo -e "  -f \t\tTo specify Note"
-    echo -e "  -l \t\tTo list Notes"
-    echo -e "  -h \t\tTo display this output"
+    echo -e "  -e           \t\tTo edit Note"
+    echo -e "  -f filename  \t\tTo specify Note"
+    echo -e "  -l           \t\tTo list Notes"
+    echo -e "  -h           \t\tTo display this output"
+    echo -e "  -t           \t\tView As plain Text"
+    echo -e "  -fe filename \t\tSame as -f and -e combined"
+    echo -e "  -pdf         \t\tConvert note into pdf"
 }
 
-viewJournals() {
-    cd ~/Documents/mynotes/journals
-    files=($(ls *.md))
-    # Check Count
-    if [ ${#files[@]} -eq 0 ]; then
-        echo "You dont have any journal"
-        exit 0
-    fi
-    # Show Journals
-    echo "Select one :"
-    for (( i=0; i<${#files[@]}; i++ ))
-    do
-        echo -e "\t$i.) ${files[$i]}"
-    done
-    # Get User input
-    read choice
-    if [ $choice -gt ${#files[@]} ]; then
-        echo "Invalid Input"
-        exit 1
-    fi
-    file="Documents/mynotes/journals/${files[$choice]}"
-    cd ~
-    cat "$file"
+toPdf() {
+    fl="$file$ext"
+
+    cat ~/Documents/mynotes/$fl | markdown -o out.html &&
+        wkhtmltopdf out.html "$file.pdf" && rm out.html &&
+        echo "PDF saved as $file.pdf"
 }
+
 #######################Main######Main##########################################
 parseArgs
 evaluate
