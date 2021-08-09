@@ -6,6 +6,7 @@ ext=".md"
 
 edit=0
 plainText=0
+copyToClip=0
 
 arg_count=$#
 args=("$@")
@@ -52,6 +53,10 @@ parseArgs(){
                 plainText=1
                 ;;
 
+            -c)
+                copyToClip=1
+                ;;
+
             -pdf)
                 toPdf
                 exit 0
@@ -65,23 +70,33 @@ parseArgs(){
 
 evaluate() {
     file="$file$ext"
+    # Edit?
     if [ $edit -eq 1 ]; then
         mkdir -p ~/Documents/mynotes
         vim ~/Documents/mynotes/$file
+
+    # Plain text
     elif [ $plainText -eq 1 ]; then
-        cat ~/Documents/mynotes/$file
+        if [ $copyToClip -eq 1 ]; then
+            cat ~/Documents/mynotes/$file | xclip -selection clipboard
+        else
+            cat ~/Documents/mynotes/$file
+        fi
+
+    # Markdown display
     else
         mdv ~/Documents/mynotes/$file
     fi
 }
 
 mynotesHelp() {
-    echo -e "My Notes, View and edit notes"
+    echo -e "My Notes, View and edit notes\n"
     echo -e "  -e           \t\tTo edit Note"
     echo -e "  -f filename  \t\tTo specify Note"
     echo -e "  -l           \t\tTo list Notes"
     echo -e "  -h           \t\tTo display this output"
     echo -e "  -t           \t\tView As plain Text"
+    echo -e "  -c           \t\tcopy to clipboard, used with -t"
     echo -e "  -fe filename \t\tSame as -f and -e combined"
     echo -e "  -pdf         \t\tConvert note into pdf"
 }
