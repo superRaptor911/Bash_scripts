@@ -73,7 +73,7 @@ evaluate() {
     # Edit?
     if [ $edit -eq 1 ]; then
         mkdir -p ~/Documents/mynotes
-        vim ~/Documents/mynotes/$file
+        nvim ~/Documents/mynotes/$file
 
     # Plain text
     elif [ $plainText -eq 1 ]; then
@@ -105,8 +105,10 @@ toPdf() {
     fl="$file$ext"
 
     cat ~/Documents/mynotes/$fl | markdown -o out.html &&
-        wkhtmltopdf out.html "$file.pdf" && rm out.html &&
-        echo "PDF saved as $file.pdf"
+        marginArgs="--margin-left 0cm --margin-right 0cm --margin-top 0cm --margin-bottom 0cm"
+        wkhtmltopdf --enable-local-file-access --user-style-sheet "$file.css" $marginArgs  out.html "$file.pdf" &&
+
+        rm out.html && echo "PDF saved as $file.pdf"
 }
 
 #######################Main######Main##########################################

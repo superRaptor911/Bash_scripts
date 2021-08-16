@@ -13,6 +13,7 @@ fi
 if [ $bat_level -lt 30 ]; then
 	notify-send "Low battery" "Please charge your battery"
 	echo "Low batterty, Bat: $bat_level%"
+    aplay ~/.config/audiomessages/lowPower.wav
 	
 	if [ $bat_level -lt 15 ]; then
 		notify-send "Battery Level Critical" "Charge your battery or Shutdown"
