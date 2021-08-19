@@ -61,6 +61,11 @@ parseArgs(){
                 toPdf
                 exit 0
                 ;;
+
+            -rm)
+                removeNote
+                exit 0
+                ;;
             *)
                 echo "wrong args"
                 exit 2
@@ -99,6 +104,7 @@ mynotesHelp() {
     echo -e "  -c           \t\tcopy to clipboard, used with -t"
     echo -e "  -fe filename \t\tSame as -f and -e combined"
     echo -e "  -pdf         \t\tConvert note into pdf"
+    echo -e "  -rm          \t\tdelete note"
 }
 
 toPdf() {
@@ -109,6 +115,12 @@ toPdf() {
         wkhtmltopdf --enable-local-file-access --user-style-sheet "$file.css" $marginArgs  out.html "$file.pdf" &&
 
         rm out.html && echo "PDF saved as $file.pdf"
+}
+
+removeNote() {
+    file="$file$ext"
+    rm ~/Documents/mynotes/$file &&
+    echo "Removed $file"
 }
 
 #######################Main######Main##########################################
