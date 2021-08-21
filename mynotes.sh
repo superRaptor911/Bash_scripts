@@ -7,6 +7,7 @@ ext=".md"
 edit=0
 plainText=0
 copyToClip=0
+removePdfMargin=0
 
 arg_count=$#
 args=("$@")
@@ -62,6 +63,15 @@ parseArgs(){
                 exit 0
                 ;;
 
+            -no-margin)
+                removePdfMargin=1
+                ;;
+
+            -html)
+                toHtml
+                exit 0
+                ;;
+
             -rm)
                 removeNote
                 exit 0
@@ -78,7 +88,7 @@ evaluate() {
     # Edit?
     if [ $edit -eq 1 ]; then
         mkdir -p ~/Documents/mynotes
-        nvim ~/Documents/mynotes/$file
+        $EDITOR ~/Documents/mynotes/$file
 
     # Plain text
     elif [ $plainText -eq 1 ]; then
@@ -104,19 +114,29 @@ mynotesHelp() {
     echo -e "  -c           \t\tcopy to clipboard, used with -t"
     echo -e "  -fe filename \t\tSame as -f and -e combined"
     echo -e "  -pdf         \t\tConvert note into pdf"
+    echo -e "  -no-margin   \t\tRemove margin from pdf"
+    echo -e "  -html        \t\tConvert note into html"
     echo -e "  -rm          \t\tdelete note"
+}
+
+toHtml() {
+    fl="$file$ext"
+    cat ~/Documents/mynotes/$fl | markdown -o "$file.html" &&
+        echo  "file saved as $file.html"
 }
 
 toPdf() {
     fl="$file$ext"
+    marginArgs=""
+
+    if [ $removePdfMargin -eq 1 ]; then
+        marginArgs="--margin-left 0cm --margin-right 0cm --margin-top 0cm --margin-bottom 0cm"
+    fi
 
     cat ~/Documents/mynotes/$fl | markdown -o out.html &&
-        marginArgs="--margin-left 0cm --margin-right 0cm --margin-top 0cm --margin-bottom 0cm"
         wkhtmltopdf --enable-local-file-access --user-style-sheet "$file.css" $marginArgs  out.html "$file.pdf" &&
-
         rm out.html && echo "PDF saved as $file.pdf"
 }
-
 removeNote() {
     file="$file$ext"
     rm ~/Documents/mynotes/$file &&
