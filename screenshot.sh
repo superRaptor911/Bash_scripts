@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p ~/Pictures/screenshots
-file_name=$(echo 'image.png' | dmenu -p 'Save file as')
+file_name=$(echo $(date +%d-%m-%y-%H-%M-%S).png | dmenu -p 'Save file as')
 file_path=~/Pictures/screenshots/$file_name
 
 if [ "$1" == "-s" ]; then
