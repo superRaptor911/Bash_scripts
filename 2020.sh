@@ -14,6 +14,8 @@ while [[ 1 ]]; do
 	sleep ${work_time}m
 	cur_brightness="$(xbacklight -get)"
 	xbacklight -set 0
+    espeak "please take a break raptor"
 	sleep $break_time
+    espeak "back to work raptor"
 	xbacklight -set $cur_brightness
 done

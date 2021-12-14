@@ -4,9 +4,12 @@ arg_count=$#
 args=("$@")
 
 saveMusic=0
-outputName=""
+loadFromFile=0
+gui=0
 
+outputName=""
 searchQuery=""
+mediaPlayer="cvlc"
 
 parseArgs(){
     
@@ -20,6 +23,12 @@ parseArgs(){
         case "${args[$i]}" in
             -s)
                 saveMusic=1
+                ;;
+            -f)
+                loadFromFile=1
+                ;;
+            -gui)
+                gui=1
                 ;;
             -h)
                 rmusicHelp
@@ -41,16 +50,21 @@ rmusicHelp() {
 
     echo "Commands -"
     echo -e "  -s           \t\tTo save as mp3"
-    echo -e "  -h           \t\tto show help"
+    echo -e "  -h           \t\tTo show help"
+    echo -e "  -f           \t\tTo play playlist songs from a file"
+    echo -e "  -gui         \t\tPlay with vlc gui"
 }
 
 ###################### Main ##############################
 parseArgs
 
 
-if [[ $customOutput -eq 0 ]]; then
+if [[ $gui -eq 1 ]]; then
+    mediaPlayer="vlc"
+
+if [[ $saveMusic -eq 0 ]]; then
     url=$(youtube-dl -f 140 -g "ytsearch1:$searchQuery")
-    cvlc "$url"
+    $mediaPlayer "$url"
 else
     outputName="$searchQuery.mp3"
     youtube-dl -f 140 "ytsearch1:$searchQuery" --audio-format mp3 -o "$outputName"
