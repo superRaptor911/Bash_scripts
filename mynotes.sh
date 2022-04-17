@@ -30,6 +30,13 @@ parseArgs(){
                     exit 2
                 fi
                 ;;
+            -r)
+                if [[ $[RANDOM % 10] -lt 5 ]]; then
+                    plainText=1
+                else
+                    exit 0
+                fi
+                ;;
             -fe)
                 edit=1
                 let i=$i+1
